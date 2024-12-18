@@ -6,11 +6,16 @@ import { User } from '../models/user';
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
 // Registrar un usuario
-export const registerUser = async (name: string, email: string, password: string): Promise<User> => {
+export const registerUser = async (
+  name: string,
+  email: string,
+  password: string,
+  role: string = 'user' // Rol predeterminado
+): Promise<User> => {
   const hashedPassword = await bcrypt.hash(password, 10); // Cifra la contraseña
   const { rows } = await query(
-    'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
-    [name, email, hashedPassword]
+    'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *',
+    [name, email, hashedPassword, role]
   );
   return rows[0];
 };
